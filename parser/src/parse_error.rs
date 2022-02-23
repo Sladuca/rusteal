@@ -14,4 +14,8 @@ pub enum ParseError<'a> {
     EmptyCondExpression,
     #[error("Unknown qualified identifier {0}")]
     UnknownQualifiedIdentifier(&'a str),
+    #[error("invalid byte value {0}")]
+    InvalidByteValue(&'a str),
+    #[error("invalid uint64 value {0}")]
+    InvalidNumValue(&'a str),
 }
