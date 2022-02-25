@@ -1,11 +1,11 @@
 use nom::{
     branch::alt,
-    bytes::complete::{escaped, is_a, tag, escaped_transform},
+    bytes::complete::{escaped, escaped_transform, is_a, tag},
     character::{
         complete::char,
         complete::{none_of, one_of},
     },
-    combinator::{self, map, value, map_res, recognize},
+    combinator::{self, map, map_res, recognize, value},
     error::ParseError as NomParseError,
     multi::{many0, many1, separated_list0, separated_list1},
     sequence::{delimited, terminated, tuple},
@@ -119,6 +119,8 @@ mod tests {
         assert_eq!(res, Expr::Primitive(Primitive::Byteslice(vec![34])));
         assert_eq!(rest, "");
 
-        byteslice("[101, 234, 356]").err().expect("array byteslice with value > 255 should fail!");
+        byteslice("[101, 234, 356]")
+            .err()
+            .expect("array byteslice with value > 255 should fail!");
     }
 }
