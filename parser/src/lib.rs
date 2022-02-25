@@ -1,11 +1,11 @@
 use nom::{
     branch::alt,
-    bytes::complete::{escaped, is_a, is_not, tag},
+    bytes::complete::{escaped, is_a, tag, escaped_transform},
     character::{
         complete::char,
         complete::{none_of, one_of},
     },
-    combinator::{self, map, map_opt, map_res, recognize},
+    combinator::{self, map, value, map_res, recognize},
     error::ParseError as NomParseError,
     multi::{many0, many1, separated_list0, separated_list1},
     sequence::{delimited, terminated, tuple},
@@ -66,11 +66,15 @@ fn quoted_byteslice(input: &str) -> IResult<&str, Expr> {
     })(input)
 }
 
-fn quoted_inner(input: &str) -> IResult<&str, &str> {
-    recognize(escaped(is_not("\\\""), '\\', is_a("\\\"")))(input)
+fn quoted_inner_escape(input: &str) -> IResult<&str, String> {
+    escaped_transform(none_of("\\\""), '\\', value("\"", char('\"')))(input)
 }
 
-fn byteslice(input: &str) -> IResult<&str, Expr> {
+fn quoted_inner(input: &str) -> IResult<&str, String> {
+    alt((quoted_inner_escape, value("".to_string(), tag(""))))(input)
+}
+
+pub fn byteslice(input: &str) -> IResult<&str, Expr> {
     alt((array_byteslice, quoted_byteslice))(input)
 }
 
@@ -95,5 +99,26 @@ mod tests {
         uint64("_123_456_789")
             .err()
             .expect("underscore at beginning of number shoud fail!");
+    }
+
+    #[test]
+    fn test_parse_byteslice() {
+        let (rest, res) = byteslice("\"hi\"").unwrap();
+        assert_eq!(res, Expr::Primitive(Primitive::Byteslice(vec![104, 105])));
+        assert_eq!(rest, "");
+
+        let (rest, res) = byteslice("[1,2,3]").unwrap();
+        assert_eq!(res, Expr::Primitive(Primitive::Byteslice(vec![1, 2, 3])));
+        assert_eq!(rest, "");
+
+        let (rest, res) = byteslice("\"\"hi").unwrap();
+        assert_eq!(res, Expr::Primitive(Primitive::Byteslice(vec![])));
+        assert_eq!(rest, "hi");
+
+        let (rest, res) = byteslice("\"\\\"\"").unwrap();
+        assert_eq!(res, Expr::Primitive(Primitive::Byteslice(vec![34])));
+        assert_eq!(rest, "");
+
+        byteslice("[101, 234, 356]").err().expect("array byteslice with value > 255 should fail!");
     }
 }
