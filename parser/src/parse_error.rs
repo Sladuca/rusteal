@@ -18,4 +18,6 @@ pub enum ParseError<'a> {
     InvalidByteValue(&'a str),
     #[error("invalid uint64 value {0}")]
     InvalidNumValue(&'a str),
+    #[error("invalid type name {0}")]
+    InvalidTypeName(&'a str),
 }

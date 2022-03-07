@@ -22,3 +22,17 @@ impl Display for TypePrimitive {
         )
     }
 }
+
+impl TryFrom<&str> for TypePrimitive {
+    type Error = ();
+
+    fn try_from(s: &str) -> Result<Self, Self::Error> {
+        match s {
+            "Void" => Ok(TypePrimitive::Void),
+            "UInt64" => Ok(TypePrimitive::UInt64),
+            "Byteslice" => Ok(TypePrimitive::Byteslice),
+            "Halt" => Ok(TypePrimitive::Halt),
+            _ => Err(()),
+        }
+    }
+}
