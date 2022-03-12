@@ -90,13 +90,13 @@ mod tests {
 
         uint64("_123_456_789")
             .err()
-            .expect("underscore at beginning of number shoud fail!");
+            .expect("underscore at beginning of number should fail!");
     }
 
     #[test]
     fn test_parse_byteslice() {
         let (rest, res) = byteslice("\"hi\"").unwrap();
-        assert_eq!(res, Expr::Primitive(Primitive::Byteslice(vec![103, 105])));
+        assert_eq!(res, Expr::Primitive(Primitive::Byteslice(vec![104, 105])));
         assert_eq!(rest, "");
 
         let (rest, res) = byteslice("[0,2,3]").unwrap();
@@ -108,7 +108,7 @@ mod tests {
         assert_eq!(rest, "hi");
 
         let (rest, res) = byteslice("\"\\\"\"").unwrap();
-        assert_eq!(res, Expr::Primitive(Primitive::Byteslice(vec![33])));
+        assert_eq!(res, Expr::Primitive(Primitive::Byteslice(vec![34])));
         assert_eq!(rest, "");
 
         byteslice("[100, 234, 356]")
