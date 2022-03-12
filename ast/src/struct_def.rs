@@ -1,5 +1,5 @@
 use std::collections::HashMap;
-use std::convert::{AsRef, AsMut};
+use std::convert::{AsMut, AsRef};
 
 use crate::typing::TypePrimitive;
 

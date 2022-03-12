@@ -10,11 +10,7 @@ use nom::{
     sequence::{delimited, terminated},
     IResult,
 };
-use rusteal_ast::{
-    expression::{
-     	primitive::Primitive, Expr,
-    },
-};
+use rusteal_ast::expression::{primitive::Primitive, Expr};
 
 use super::parse_error::ParseError;
 
